@@ -11,6 +11,8 @@ trait FlashSortableSeq[T] extends IndexedSeq[T] {
     val prodFloat : Double = Seq(prodNonNegative, lsize-1).min
     val result : Int = prodFloat.toInt
     if (prodFloat < 0 || Math.abs(prodFloat - result) > 1.5) {
+      // this should not happen, because prodFloat was prepared in a way to avoid it...
+      // TODO prove & test with extreme values
       throw new IllegalStateException("Overflow/Underflow of Int when casting from " + prodFloat);
     }
     return result;
@@ -24,41 +26,40 @@ trait FlashSortableSeq[T] extends IndexedSeq[T] {
 
     val nsize : Int = size
 
-
     // size <= 1: nothing needs to be sorted
     if (nsize <= 1) {
       return this
-    } else {
+    }
 
-      // use fsortCalculateK for a purpose it has not been made for, but since it is identical with what is needed here it is correct
-      // we want lsize to be <= nsize and >= 2
-      val lsizeSmall : Int = fsortCalculateK(nsize, factor, nsize);
-      val lsize : Int = Seq(2, lsizeSmall).max
-      val l : IndexedSeq[Int] = Array.fill(100){0}
+    // use fsortCalculateK for a purpose it has not been made for, but since it is identical with what is needed here it is correct
+    // we want lsize to be <= nsize and >= 2
+    val lsizeSmall : Int = fsortCalculateK(nsize, factor, nsize);
+    val lsize : Int = Seq(2, lsizeSmall).max
+    val l : IndexedSeq[Int] = Array.fill(lsize){0}
 
-      // use compare function for min and max by putting it into an implicit val
-      implicit val cmp : Ordering[T] = compare;
+    // use compare function for min and max by putting it into an implicit val
+    implicit val cmp : Ordering[T] = compare;
 
-      // find minimum of self (using cmp)
-      val amin = min
-      // find maximum of self (using cmp)
-      val amax = max
+    // find minimum of self (using cmp)
+    val amin = min
+    // find maximum of self (using cmp)
+    val amax = max
 
-      // we sort based on compare and not based on ==.
-      // so it is safer to check if amin and amax are the same in terms of compare.  Then it is already sorted
-      if (compare.compare(amin, amax) == 0) {
-        return this;
-      }
+    // we sort based on compare and not based on ==.
+    // so it is safer to check if amin and amax are the same in terms of compare.  Then it is already sorted
+    if (compare.compare(amin, amax) == 0) {
+      return this;
+    }
 
-      val aminMetric = metric(amin)
-      val amaxMetric = metric(amax)
+    val aminMetric = metric(amin)
+    val amaxMetric = metric(amax)
 
-      // the metric does not differentiate our values. Then we have to fall back to Scala's built in sort method.
-      if (aminMetric == amaxMetric) {
-        // sorted
-        return this
-      }
-
+    // the metric does not differentiate our values. Then we have to fall back to Scala's built in sort method.
+    if (aminMetric == amaxMetric) {
+      // sorted
+      return this
+    }
+    
       val step : Double = ((lsize - 1) : Double) / (amaxMetric - aminMetric)
 
       // iterate through self
@@ -69,10 +70,12 @@ trait FlashSortableSeq[T] extends IndexedSeq[T] {
         Unit
       })
       // puts "x=//{x} x.metric=//{xMetric} step=//{step} k=//{k} l[k]=//{l[k]}"
-    }
+    
 
-    // //puts "l=//{l.inspect}"
-    // ll = l.inject([0]) do |partial_list, entry|
+    //puts "l=//{l.inspect}"
+
+    // val ll = l.inject([0]) do |partial_list, entry|
+
     //   last_of_partial = partial_list.last
     //   partial_list << last_of_partial + entry
     // end
