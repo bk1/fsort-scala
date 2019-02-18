@@ -1,6 +1,7 @@
 package net.itsky.sortsearch.fsort
 
 import scala.collection.mutable.IndexedSeq
+import scala.reflect.ClassTag
 
 trait FlashSortableSeq[T] extends IndexedSeq[T] {
 
@@ -18,11 +19,11 @@ trait FlashSortableSeq[T] extends IndexedSeq[T] {
     return result;
   }
 
-  def fsort(compare: Ordering[T], metric: Function1[T, Long]): FlashSortableSeq[T] = {
-    fsortWithFactor(compare, metric, 0.42);
+  def fsort(compare: Ordering[T], metric: Function1[T, Long])(implicit classTag: ClassTag[T]): FlashSortableSeq[T] = {
+    fsortWithFactor(compare, metric, 0.42)(classTag)
   }
 
-  def fsortWithFactor(compare: Ordering[T], metric: Function1[T, Long], factor : Double): FlashSortableSeq[T] = {
+  def fsortWithFactor(compare: Ordering[T], metric: Function1[T, Long], factor : Double)(implicit classTag: ClassTag[T]): FlashSortableSeq[T] = {
 
     val nsize : Int = size
 
@@ -60,28 +61,19 @@ trait FlashSortableSeq[T] extends IndexedSeq[T] {
       return this
     }
     
-      val step : Double = ((lsize - 1) : Double) / (amaxMetric - aminMetric)
+    val step : Double = ((lsize - 1) : Double) / (amaxMetric - aminMetric)
 
-      // iterate through self
-      foreach ( x =>  {
-        val xMetric = metric(x) // fsortMetric(x, metric)
-        val k : Int = fsortCalculateK(xMetric - aminMetric, step, lsize)
-        l(k) = l(k) + 1
-        Unit
-      })
-      // puts "x=//{x} x.metric=//{xMetric} step=//{step} k=//{k} l[k]=//{l[k]}"
-    
+    // iterate through self
+    foreach ( x =>  {
+      val xMetric = metric(x) // fsortMetric(x, metric)
+      val k : Int = fsortCalculateK(xMetric - aminMetric, step, lsize)
+      l(k) += 1
+      Unit
+    })
 
-    //puts "l=//{l.inspect}"
+    val ll = l.scanLeft(0)(_+_)
 
-    // val ll = l.inject([0]) do |partial_list, entry|
-
-    //   last_of_partial = partial_list.last
-    //   partial_list << last_of_partial + entry
-    // end
-    // //puts "ll=//{l.inspect}"
-
-    // result = [nil] * nsize
+    val result = new Array[T](nsize)
     
     // positions = ll.clone
 
