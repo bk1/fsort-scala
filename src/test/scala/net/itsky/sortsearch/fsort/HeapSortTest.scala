@@ -105,4 +105,31 @@ class HeapSortTest extends FlatSpec with Matchers {
     arr(2) should be (3)
   }
 
+  "An two element Array duplicating one element" should "be sorted without any changes" in {
+    val arr : Array[Int] = Array(79, 79)
+    val cmp = Ordering.Int
+    HeapSort.hsort(arr, cmp)
+    arr.length should be (2)
+    arr(0) should be (79)
+    arr(1) should be (79)
+  }
+
+  "An two element ascending Array" should "be sorted without any changes" in {
+    val arr : Array[Int] = Array(11, 12)
+    val cmp = Ordering.Int
+    HeapSort.hsort(arr, cmp)
+    arr.length should be (2)
+    arr(0) should be (11)
+    arr(1) should be (12)
+  }
+
+  "An two element descending Array" should "be sorted ascendingly" in {
+    val arr : Array[Int] = Array(12, 11)
+    val cmp = Ordering.Int
+    HeapSort.hsort(arr, cmp)
+    arr.length should be (2)
+    arr(0) should be (11)
+    arr(1) should be (12)
+  }
+
 }
