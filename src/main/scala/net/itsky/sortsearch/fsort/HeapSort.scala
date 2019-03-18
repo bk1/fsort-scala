@@ -45,6 +45,13 @@ object HeapSort {
                   relativeStart : Int,
                   compare       : Ordering[T]) : Unit = {
     println("siftDown(absolutStart=" + absoluteStart+ " absoluteEnd=" + absoluteEnd + " relativeStart=" + relativeStart + ")")
+    if (relativeStart < absoluteStart) {
+      throw new ArrayIndexOutOfBoundsException("relativeStart=" + relativeStart + " < absoluteStart=" + absoluteStart);
+    }
+    if (relativeStart >= absoluteEnd) {
+      // nothing to do
+      return
+    }
     var rootIdx = relativeStart
     var running = true
     while (running) {
@@ -82,11 +89,10 @@ object HeapSort {
                  absoluteStart : Int,
                  absoluteEnd   : Int,
                  compare       : Ordering[T]) : Unit = {
-    println("heapify(absolutStart=" + absoluteStart+ " absoluteEnd=" + absoluteEnd + ")")
+    println("heapify(absoluteStart=" + absoluteStart+ " absoluteEnd=" + absoluteEnd + ")")
     val maxIndex = absoluteEnd - 1
-    val relativeStart = parent(maxIndex, absoluteStart)
-    var idx : Int = 0
-    for (idx <- relativeStart to 0 by -1) {
+    val maxParent = parent(maxIndex, absoluteStart)
+    for (idx <- maxParent to absoluteStart by -1) {
       siftDown(arr, absoluteStart, absoluteEnd, idx, compare)
     }
   }
@@ -103,11 +109,9 @@ object HeapSort {
               absoluteStart,
               absoluteEnd,
               compare)
-      var relativeEnd : Int = 0
-      val range : Range = (absoluteEnd-1) to (absoluteStart+1) by -1;
-      for (relativeEnd <- range) {
-        swapElements(arr, absoluteStart, relativeEnd)
-        siftDown(arr, absoluteStart, absoluteEnd, absoluteStart, compare)
+      for (idx <- (absoluteEnd-1) to (absoluteStart+1) by -1) {
+        swapElements(arr, absoluteStart, idx)
+        siftDown(arr, absoluteStart, idx, absoluteStart, compare)
       }
     }
   }
