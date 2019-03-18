@@ -44,7 +44,6 @@ object HeapSort {
                   absoluteEnd   : Int,
                   relativeStart : Int,
                   compare       : Ordering[T]) : Unit = {
-    println("siftDown(absolutStart=" + absoluteStart+ " absoluteEnd=" + absoluteEnd + " relativeStart=" + relativeStart + ")")
     if (relativeStart < absoluteStart) {
       throw new ArrayIndexOutOfBoundsException("relativeStart=" + relativeStart + " < absoluteStart=" + absoluteStart);
     }
@@ -62,20 +61,17 @@ object HeapSort {
         running = false
       } else {
         // check left child.  If it is greater than root, swap them
-        println("siftDown(absolutStart=" + absoluteStart+ " absoluteEnd=" + absoluteEnd + " relativeStart=" + relativeStart + ") rootIdx=" + rootIdx + " leftChildIdx=" + leftChildIdx)
         if (compare.compare(arr(rootIdx), arr(leftChildIdx)) < 0) {
           swapIdx = leftChildIdx
         }
         val rightChildIdx = leftChildIdx + 1
         if (rightChildIdx < absoluteEnd) {
           // check right child.  If it is greater than root, swap them
-          println("siftDown(absolutStart=" + absoluteStart+ " absoluteEnd=" + absoluteEnd + " relativeStart=" + relativeStart + ") rootIdx=" + rootIdx + " rightChildIdx=" + rightChildIdx)
           if (compare.compare(arr(swapIdx), arr(rightChildIdx)) < 0) {
             swapIdx = rightChildIdx
           }
         }
         if (swapIdx != rootIdx) {
-          println("siftDown(absolutStart=" + absoluteStart+ " absoluteEnd=" + absoluteEnd + " relativeStart=" + relativeStart + ") rootIdx=" + rootIdx + " swapIdx=" + swapIdx)
           swapElements(arr, rootIdx, swapIdx)
           rootIdx = swapIdx
         } else {
@@ -89,7 +85,6 @@ object HeapSort {
                  absoluteStart : Int,
                  absoluteEnd   : Int,
                  compare       : Ordering[T]) : Unit = {
-    println("heapify(absoluteStart=" + absoluteStart+ " absoluteEnd=" + absoluteEnd + ")")
     val maxIndex = absoluteEnd - 1
     val maxParent = parent(maxIndex, absoluteStart)
     for (idx <- maxParent to absoluteStart by -1) {
@@ -102,7 +97,6 @@ object HeapSort {
                       absoluteEnd : Int, 
                       compare: Ordering[T])(implicit classTag: ClassTag[T]) : Unit = {
 
-    println("hsortPartial(absolutStart=" + absoluteStart+ " absoluteEnd=" + absoluteEnd + ")")
     if (absoluteEnd - absoluteStart > 1) {
       // only do non trivial sorting
       heapify(arr,

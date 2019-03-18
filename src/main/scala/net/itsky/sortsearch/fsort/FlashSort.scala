@@ -7,7 +7,7 @@ import java.util.Arrays
 import scala.collection.mutable.IndexedSeq
 import scala.reflect.ClassTag
 
-object FlashSortableSeq {
+object FlashSort {
 
   private def fsortCalculateK(metricValue : Long, factor : Double, lsize : Int) : Int = {
     // calculate prod as factor*value, add a small delta for rounding, force it into the closed interval [0,lsize-1] using min and max
@@ -73,10 +73,8 @@ object FlashSortableSeq {
       l(k) += 1
       Unit
     })
-    println("l=" + l)
-    
+
     val ll : IndexedSeq[Int] = l.scanLeft(0)(_+_)
-    println("ll=" + ll)
 
     val result = new Array[T](nsize)
     
@@ -93,19 +91,10 @@ object FlashSortableSeq {
     ll.sliding(2).foreach {
       case Seq(start, end) => {
         if (start < end - 1) {
-          
-         // TODO Arrays.sort[T](result, start, end) //, cmp)
-          println("start=" + start + " end=" + end + " result=" + result)
+          HeapSort.hsortPartial(result, start, end, compare)
         }
       }
     }
-    // ll.shift
-    // ll.inject(0) do |prev, current|
-    //   result[prev..current] = result[prev..current].sort
-    //   current
-    // end
-
-    // result
 
     return result
   }
