@@ -23,15 +23,20 @@ object FlashSort {
     return result;
   }
 
-  def fsortPartial[T](unsorted : IndexedSeq[T], idxLowerIncl : Int, idxUpperExcl : Int, compare: Ordering[T], metric: Function1[T, Long])(implicit classTag: ClassTag[T]) : IndexedSeq[T] = { // FlashSortableSeq[T] = {
+  def fsortPartial[T](unsorted : IndexedSeq[T], idxLowerIncl : Int, idxUpperExcl : Int, compare: Ordering[T], metric: Function1[T, Long])
+                     (implicit classTag: ClassTag[T]) : IndexedSeq[T] = {
+
     fsortPartialWithFactor(unsorted, idxLowerIncl, idxUpperExcl, compare, metric, 0.42)(classTag)
   }
 
-  def fsort[T](unsorted : IndexedSeq[T], compare: Ordering[T], metric: Function1[T, Long])(implicit classTag: ClassTag[T]) : IndexedSeq[T] = { // FlashSortableSeq[T] = {
+  def fsort[T](unsorted : IndexedSeq[T], compare: Ordering[T], metric: Function1[T, Long])
+              (implicit classTag: ClassTag[T]) : IndexedSeq[T] = {
+
     fsortWithFactor(unsorted, compare, metric, 0.42)(classTag)
   }
 
-  def fsortWithFactor[T](unsorted : IndexedSeq[T], compare: Ordering[T], metric: Function1[T, Long], factor : Double)(implicit classTag: ClassTag[T]) : IndexedSeq[T] = {
+  def fsortWithFactor[T](unsorted : IndexedSeq[T], compare: Ordering[T], metric: Function1[T, Long], factor : Double)
+                        (implicit classTag: ClassTag[T]) : IndexedSeq[T] = {
 
     val nsize : Int = unsorted.size
 
