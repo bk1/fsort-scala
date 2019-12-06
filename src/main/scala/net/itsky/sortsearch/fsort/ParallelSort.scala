@@ -36,7 +36,7 @@ object ParallelSort {
       if (pos < endPos) {
         val ppos = pos
         pos += 1
-        Some(sortedSeq(pos))
+        Some(sortedSeq(ppos))
       } else {
         None
       }
@@ -102,7 +102,14 @@ object ParallelSort {
     }
   }
 
-  /** for fsort
+  def fsortParallel[T](unsorted: immutable.IndexedSeq[T], compare: Ordering[T], metric: Function1[T, Long],
+                       nSegments: Int, executionContext: ExecutionContext)
+                      (implicit classTag: ClassTag[T]): immutable.IndexedSeq[T] = {
+    val unsortedMutable : mutable.IndexedSeq[T] = unsorted.to[mutable.IndexedSeq]
+    fsortParallelM(unsortedMutable, compare, metric, nSegments, executionContext)(classTag)
+  }
+
+    /** for fsort
     *
     * @param unsorted         the unsorted data. This needs to be mutable and is destroyed in the process :-( (TODO: fix this)
     * @param compare          the comparator
@@ -113,9 +120,9 @@ object ParallelSort {
     * @tparam T type of the objects to be sorted
     * @return a sorted copy of the data
     */
-  def fsortParallel[T](unsorted: IndexedSeq[T], compare: Ordering[T], metric: Function1[T, Long],
-                       nSegments: Int, executionContext: ExecutionContext)
-                      (implicit classTag: ClassTag[T]): immutable.IndexedSeq[T] = {
+  def fsortParallelM[T](unsorted: mutable.IndexedSeq[T], compare: Ordering[T], metric: Function1[T, Long],
+                        nSegments: Int, executionContext: ExecutionContext)
+                       (implicit classTag: ClassTag[T]): immutable.IndexedSeq[T] = {
 
     implicit val executionContextImpl = executionContext
     if (nSegments <= 0) {
@@ -141,7 +148,7 @@ object ParallelSort {
     Await.result(aggr, Duration.Inf)
 
     val heapOfPartialSeqs = new HeapOfSortedPartialSeqs[T](unsorted, compare, nSegments, segmentBoundaries)
-    val result = (0 until nElements).flatMap(i=> heapOfPartialSeqs.peek)
+    val result = (0 until nElements).flatMap(i=> heapOfPartialSeqs.read)
     result
   }
 
