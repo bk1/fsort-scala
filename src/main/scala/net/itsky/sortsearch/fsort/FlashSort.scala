@@ -3,9 +3,6 @@
 
 package net.itsky.sortsearch.fsort
 
-import java.util.Arrays
-
-import scala.collection.immutable
 import scala.collection.mutable.IndexedSeq
 import scala.reflect.ClassTag
 

@@ -24,7 +24,7 @@ object FileIO {
     val file = new File(fileName)
     val outputStream = new FileOutputStream(file)
     val fileWriter = new OutputStreamWriter(outputStream, UTF8)
-    val bw = new BufferedWriter(new FileWriter(file))
+    val bw = new BufferedWriter(fileWriter)
     try {
       for (line <- lines) {
         bw.write(line)

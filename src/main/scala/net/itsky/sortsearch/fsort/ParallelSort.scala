@@ -1,17 +1,12 @@
 package net.itsky.sortsearch.fsort
 
-import java.util.concurrent.ExecutorService
-
-import scala.concurrent.{ExecutionContext, Future}
 import net.itsky.sortsearch.fsort.FlashSort.fsortWithFactor
 
+import scala.collection.mutable.{ArrayBuffer, IndexedSeq}
 import scala.collection.{immutable, mutable}
 import scala.concurrent.duration.Duration
-import scala.concurrent.Await
-import scala.concurrent.Awaitable
-import scala.collection.mutable.IndexedSeq
+import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.reflect.ClassTag
-import scala.collection.mutable.ArrayBuffer
 
 
 object ParallelSort {
@@ -144,7 +139,7 @@ object ParallelSort {
         FlashSort.fsortPartial(unsorted, segmentBoundaries(seqIdx), segmentBoundaries(seqIdx+1), compare, metric)
       })(executionContext))
     // barrier: wait for all futures to complete
-    val aggr = Future.sequence(futures)
+    val aggr :Future[Seq[Unit]] = Future.sequence(futures)
     Await.result(aggr, Duration.Inf)
 
     val heapOfPartialSeqs = new HeapOfSortedPartialSeqs[T](unsorted, compare, nSegments, segmentBoundaries)

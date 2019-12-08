@@ -1,11 +1,6 @@
 
 package net.itsky.sortsearch.fsort
 
-import java.util.Arrays
-import scala.collection.mutable.IndexedSeq
-import scala.reflect.ClassTag
-
-import collection.mutable.Stack
 import org.scalatest._
 
 class HeapSortTest extends FlatSpec with Matchers {

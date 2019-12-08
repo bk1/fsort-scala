@@ -4,7 +4,6 @@ package net.itsky.sortsearch.fsort
 import org.scalatest._
 
 import scala.collection.{immutable, mutable}
-import scala.collection.mutable.{ArrayBuffer, IndexedSeq, ListBuffer}
 import scala.concurrent.ExecutionContext
 
 class ParallelSortTest extends FlatSpec with Matchers {
@@ -105,9 +104,9 @@ class ParallelSortTest extends FlatSpec with Matchers {
       val arrs: Seq[Array[Int]] = Seq(Array(1, 2, 3, 4, 5), Array(5, 4, 3, 2, 1), Array(1, 5, 2, 4, 3))
       for (unsorted <- arrs) {
         val arr = ParallelSort.fsortParallelM(unsorted, cmp, metric, i, ec)
-        println("i=" + i + " unsorted=" +unsorted.toList + " arr=" + arr)
+        //println("i=" + i + " unsorted=" +unsorted.toList + " arr=" + arr)
         arr.length should be(5)
-        println("i=" + i + " arr=" + arr.toList)
+        //println("i=" + i + " arr=" + arr.toList)
         arr(0) should be(1)
         arr(1) should be(2)
         arr(2) should be(3)
@@ -122,7 +121,7 @@ class ParallelSortTest extends FlatSpec with Matchers {
       val arrs: Seq[Array[Int]] = Seq(Array(1, 2, 3, 4, 5, 6), Array(6, 5, 4, 3, 2, 1), Array(1, 5, 2, 6, 4, 3))
       for (unsorted <- arrs) {
         val arr = ParallelSort.fsortParallelM(unsorted, cmp, metric, i, ec)
-        println("i=" + i + " unsorted=" +unsorted + " arr=" + arr)
+        //println("i=" + i + " unsorted=" +unsorted + " arr=" + arr)
         arr.length should be(6)
         arr(0) should be(1)
         arr(1) should be(2)
@@ -138,9 +137,9 @@ class ParallelSortTest extends FlatSpec with Matchers {
     for (i <- (1 until 20)) {
       val arrs: Seq[Array[Int]] = Seq(Array(10, 8, 9, 4, 5, 6, 1, 2, 3, 7), Array(10, 9, 8, 7, 6, 5, 4, 3, 2, 1))
       for (unsorted <- arrs) {
-        println("i=" + i + " unsorted=" +unsorted)
+        //println("i=" + i + " unsorted=" +unsorted)
         val arr = ParallelSort.fsortParallelM(unsorted, cmp, metric, i, ec)
-        println("i=" + i + " unsorted=" +unsorted + " arr=" + arr)
+        // println("i=" + i + " unsorted=" +unsorted + " arr=" + arr)
         arr.length should be(10)
         arr(0) should be(1)
         arr(1) should be(2)

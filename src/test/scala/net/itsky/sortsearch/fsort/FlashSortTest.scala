@@ -422,7 +422,7 @@ class FlashSortTest extends FlatSpec with Matchers {
       arrF(idx) should be (arrP(idx))
     }
     for (idx <- 1 until 136) {
-      println("idx=" + idx + " e_i-1=" + arrH(idx-1) + " e_i=" + arrH(idx))
+      // println("idx=" + idx + " e_i-1=" + arrH(idx-1) + " e_i=" + arrH(idx))
       arrH(idx).compareTo(arrH(idx-1)) should be >= 0
       StandardMetrics.utf16(arrH(idx)) should be >= StandardMetrics.utf16(arrH(idx-1))
       StandardMetrics.cyr(arrP(idx)) should be >= StandardMetrics.cyr(arrP(idx-1))
