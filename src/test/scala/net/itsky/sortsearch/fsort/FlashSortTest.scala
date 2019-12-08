@@ -11,15 +11,6 @@ class FlashSortTest extends FlatSpec with Matchers {
   val metric = (x : Int) => x.longValue() << 8
 
   val cmps = Ordering.String
-  val metrics = (x : String) => {
-    x.length match {
-      case 0 => 0L
-      case 1 => (x.charAt(0) + 1L)* 65537* 65537* 16385
-      case 2 => ((x.charAt(0) + 1L) * 65537 + x.charAt(1) + 1)* 65537* 16385
-      case 3 => (((x.charAt(0) + 1L) * 65537 + x.charAt(1) + 1) * 65537 + x.charAt(2) + 1) * 16385
-      case _ => (((x.charAt(0) + 1L) * 65537 + x.charAt(1) + 1) * 65537 + x.charAt(2) + 1) * 16385 + (x.charAt(3) >> 2) + 1
-    }
-  }
 
   "An empty Array" should "be sorted without any changes" in {
     val unsorted : Array[Int] = Array()
@@ -277,6 +268,174 @@ class FlashSortTest extends FlatSpec with Matchers {
       arr(idx) should be (idx + 1)
     }
   }
+
+  "An array of cyrillic Strings " should " be sorted ascendingly" in {
+    val unsortedMaster = Array("Википедия",
+      "Медиа",
+      "Служебная",
+      "Обсуждение",
+      "Участник",
+      "Обсуждение участника",
+      "Википедия",
+      "Обсуждение Википедии",
+      "Файл",
+      "Обсуждение файла",
+      "Обсуждение MediaWiki",
+      "Шаблон",
+      "Обсуждение шаблона",
+      "Справка",
+      "Обсуждение справки",
+      "Категория",
+      "Обсуждение категории",
+      "Портал",
+      "Обсуждение портала",
+      "Инкубатор",
+      "Обсуждение Инкубатора",
+      "Проект",
+      "Обсуждение проекта",
+      "Арбитраж",
+      "Обсуждение арбитража",
+      "Модуль",
+      "Обсуждение модуля",
+      "Гаджет",
+      "Обсуждение гаджета",
+      "Определение гаджета",
+      "Обсуждение определения гаджета",
+      "Тема",
+      "Базовая статья",
+      "Литва",
+      "UT:85.113.33.129|обс.]]): излишнее уточнение",
+      "{{другие значения}}",
+      "{{Государство",
+      "| Русское название = Литовская Республика",
+      "| Оригинальное название = {{lang-lt|Lietuvos Respublika}}",
+      "| Родительный падеж = Литвы",
+      "| Герб = Coat of Arms of Lithuania.svg",
+      "| Флаг = Flag of Lithuania.svg",
+      "| Аудио = Tautiška_giesme_instumental.ogg",
+      "] [[1918 год]]а ([[де-юре]] от [[Российск",
+      "t;/ref&gt;)&lt;br&gt;[[11 марта]] [[1990]] (де-фак",
+      "[[1991]] (де-юре от [[СССР]])",
+      "| На карте = EU-Lithuania.svg",
+      "| Язык = [[литовский язык|литовский]]",
+      "| Столица = [[Вильнюс]]",
+      "| Форма правления = [[смешанная республика]]",
+      ", [[Каунас]], [[Клайпеда]]",
+      "иденты Литвы|Президент]]",
+      "| Руководитель 1 = [[Гитанас Науседа]]",
+      "ьер-министры Литвы|Премьер-минис",
+      "тр]]",
+      "| Руководитель 2 = [[Саулюс Сквернялис]]",
+      "| Место по территории = 121",
+      "| Территория = 65 301",
+      "| Процент воды = -",
+      "| Этнохороним = литовцы, литовец, литовка",
+      "| Место по населению = 137",
+      "| Год оценки = май 2019",
+      "54000}}&lt;ref name=&quot;прессрелиз&quot;&gt;{{ci",
+      "ymas.pdf |title=Предварительные итоги п",
+      "зе Департамента статистики. |accessd",
+      "| Год переписи = 2011",
+      "| Плотность населения = 43",
+      "| Место по плотности = 173",
+      "| Год расчёта ВВП (ППС) = 2019",
+      "| Место по ВВП (ППС) = 83",
+      "| Место по ВВП (ППС) на душу населения = 38",
+      "| Год расчёта ВВП (номинал) = 2019",
+      "| Место по ВВП (номинал) = 82",
+      "{{увеличение}} 19 748&lt;ref name=&quot;imf2&quot",
+      "| Место по ВВП (номинал) на душу населения = 42",
+      "| Год расчёта ИРЧП = 2018",
+      "| Место по ИРЧП = 35",
+      "&quot;&gt;очень высокий&lt;/span&gt;",
+      "ийский классификатор валют|код 97",
+      "| Телефонный код = 370",
+      "| Домен = [[.lt]], [[.eu]]",
+      "| МОК = LTU",
+      "ское время|EET]] ([[UTC+02:00|UTC+2]], [[Летне",
+      "| прим = {{примечания|group=&quot;~&quot;}}",
+      "осударство]], расположенное в [[Ст",
+      "а страны — [[Вильнюс]].",
+      ".gov.lt|accessdate=2019-09-24}}&lt;/ref&gt;. Имеет вы",
+      "му морю]], расположена на его вост",
+      "составляет всего 99 км (наименьши",
+      "лининградская область|Калинингр",
+      "адской областью]] [[Россия|России]].",
+      "ена 11 марта 1990 года, а юридически",
+      "== Этимология ==",
+      "е известна, при этом существует м",
+      "ых не получила всеобщего признан",
+      "вропейские языки|индоевропейски",
+      "'» и [[Румыния|Румынии]] «''Litua''», из",
+      ", со временем заняло ведущее поло",
+      "нено на всё государство. В «[[Пове",
+      "ных лет]]» (XII век) упоминается [[эт",
+      "полностью совпадающий с названи",
+      "== Географические данные ==",
+      "[[Файл:Litauen RUS.png|frame|Карта Литвы]]",
+      "{{главная|География Литвы}}",
+      "внутренние воды — 1 %.",
+      "калнас) в юго-восточной части стр",
+      "и [[Вилия (река)|Вилия]].",
+      "итвы и Белоруссии (площадь 44,8 км²",
+      "61 м)&lt;ref&gt;{{из БСЭ|заглавие=Литовс",
+      "етом +17 °C. Выпадает 748 мм осадков в год.",
+      "ьные материалы.",
+      "== История ==",
+      "{{главная|История Литвы}}",
+      "=== Древнейшая история ===",
+      "еская основа Литвы сформирована",
+      "товских курганов|археологическо",
+      "чной Литвы и Северо-Западной [[Бе",
+      "едзеў А. М.'' Культура ўсходнеліт",
+      "русi. Жалезны век i ранняе сярэдн",
+      "&lt;/ref&gt;. Около VII века [[литовский",
+      "ык|латышского]]&lt;ref name=&quot;История",
+      "ория Литвы. — Вильнюс, 2013. — С. 13.",
+      "=== Зарождение государства ===",
+      "а территории современной Литвы о",
+      "звание «[[Литва (термин)|Литва]]» в",
+      "(река)|Няриса]]&lt;ref name=&quot;История",
+      "менной гипотезе, название страны",
+      ". Через несколько лет Миндовг отр",
+      "более чем пятисотлетнему сущест",
+      "ого]].",
+      "=== Великое княжество Литовское ===",
+      "ория МИД 39&quot;&gt;''Эйдинтас А. и др.'",
+      "Польское|Королевством Польским]]",
+      "территория составила примерно 93",
+      "0 тыс. км².",
+      "ду в [[Грюнвальдская битва|Грюнва")
+    val arrH = unsortedMaster.clone
+    val unsortedF : IndexedSeq[String] = unsortedMaster.clone.to[IndexedSeq]
+    val arrP : IndexedSeq[String] = unsortedMaster.clone.to[IndexedSeq]
+    HeapSort.hsort(arrH, cmps)
+    FlashSort.fsortPartial[String](arrP, 0, 136, cmps, StandardMetrics.cyr)
+    val arrF  : IndexedSeq[String] =  FlashSort.fsort[String](unsortedF, cmps, StandardMetrics.cyr)
+    arrH.length should be(136)
+    arrP.length should be(136)
+    arrF.length should be(136)
+    arrP should be (arrH)
+    arrF should be (arrP)
+    for (idx <- 0 until 136) {
+      arrP(idx) should be (arrH(idx))
+      arrF(idx) should be (arrP(idx))
+    }
+    for (idx <- 1 until 136) {
+      println("idx=" + idx + " e_i-1=" + arrH(idx-1) + " e_i=" + arrH(idx))
+      arrH(idx).compareTo(arrH(idx-1)) should be >= 0
+      StandardMetrics.utf16(arrH(idx)) should be >= StandardMetrics.utf16(arrH(idx-1))
+      StandardMetrics.cyr(arrP(idx)) should be >= StandardMetrics.cyr(arrP(idx-1))
+      StandardMetrics.cyr(arrF(idx)) should be >= StandardMetrics.cyr(arrF(idx-1))
+      StandardMetrics.cyr(arrH(idx)) should be >= StandardMetrics.cyr(arrH(idx-1))
+      StandardMetrics.iso646irv(arrH(idx)) should be >= StandardMetrics.iso646irv(arrH(idx-1))
+      StandardMetrics.iso88591(arrH(idx)) should be >= StandardMetrics.iso88591(arrH(idx-1))
+
+      arrP(idx).compareTo(arrP(idx-1)) should be >= 0
+      arrF(idx).compareTo(arrF(idx-1)) should be >= 0
+    }
+  }
+
   "An hundred element Array of Strings" should "be be sorted ascendingly" in {
     val unsortedMaster = Array("Hetf8mnx",
       "6spax",
@@ -383,8 +542,8 @@ class FlashSortTest extends FlatSpec with Matchers {
     val unsortedF : IndexedSeq[String] = unsortedMaster.clone.to[IndexedSeq]
     val arrP : IndexedSeq[String] = unsortedMaster.clone.to[IndexedSeq]
     HeapSort.hsort(arrH, cmps)
-    FlashSort.fsortPartial[String](arrP, 0, 100, cmps, metrics)
-    val arrF  : IndexedSeq[String] =  FlashSort.fsort[String](unsortedF, cmps, metrics)
+    FlashSort.fsortPartial[String](arrP, 0, 100, cmps, StandardMetrics.utf16)
+    val arrF  : IndexedSeq[String] =  FlashSort.fsort[String](unsortedF, cmps, StandardMetrics.utf16)
     arrH.length should be(100)
     arrP.length should be(100)
     arrF.length should be(100)
@@ -396,9 +555,13 @@ class FlashSortTest extends FlatSpec with Matchers {
     }
     for (idx <- 1 until 100) {
       arrH(idx).compareTo(arrH(idx-1)) should be >= 0
-      metrics(arrH(idx)) should be >= metrics(arrH(idx-1))
-      metrics(arrP(idx)) should be >= metrics(arrP(idx-1))
-      metrics(arrF(idx)) should be >= metrics(arrF(idx-1))
+      StandardMetrics.utf16(arrH(idx)) should be >= StandardMetrics.utf16(arrH(idx-1))
+      StandardMetrics.utf16(arrP(idx)) should be >= StandardMetrics.utf16(arrP(idx-1))
+      StandardMetrics.utf16(arrF(idx)) should be >= StandardMetrics.utf16(arrF(idx-1))
+      StandardMetrics.cyr(arrH(idx)) should be >= StandardMetrics.cyr(arrH(idx-1))
+      StandardMetrics.iso646irv(arrH(idx)) should be >= StandardMetrics.iso646irv(arrH(idx-1))
+      StandardMetrics.iso88591(arrH(idx)) should be >= StandardMetrics.iso88591(arrH(idx-1))
+
       arrP(idx).compareTo(arrP(idx-1)) should be >= 0
       arrF(idx).compareTo(arrF(idx-1)) should be >= 0
     }
