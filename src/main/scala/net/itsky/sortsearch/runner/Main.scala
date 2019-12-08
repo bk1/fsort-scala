@@ -36,6 +36,7 @@ object Main {
     }
     val unsorted = read(fileName, numberOfLines)
     val sorted = sort(unsorted, algorithm, metric, nSegments)
+    check(sorted)
   }
 
   def sort(lines : Seq[String], algorithm : String, metric : String => Long, nSegments : Int) : Seq[String] = {
@@ -46,7 +47,7 @@ object Main {
         case "h" => {
           val sortable = lines.to[mutable.IndexedSeq]
           HeapSort.hsort(sortable, Ordering.String)
-          lines
+          sortable
         }
         case "f" => {
           FlashSort.fsort(lines.to[mutable.IndexedSeq], Ordering.String, metric)
@@ -60,9 +61,20 @@ object Main {
       }
     } finally {
       val t1 = System.currentTimeMillis()
-      println("t=" + (t1 -t0) + "msec")
+      println("t=" + (t1 -t0) + "msec for sorting. algorithm=" + algorithm)
 
     }
+  }
+
+  def check(lines : Seq[String]) : Unit = {
+    var pos = 0
+    lines.foldLeft(lines(0))((x,y)=> {
+      if (x > y) {
+        println("pos=" + pos + " x=\"" + x + "\" y=\"" + y + "\" out of order")
+      }
+      pos+=1
+      y
+    })
   }
 
   def write(fileName : String, sorted : Seq[String]) : Unit = {
